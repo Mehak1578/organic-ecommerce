@@ -1,0 +1,16 @@
+/* App Component Styles */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Ensure footer stays at bottom */
+.main-content {
+  flex: 1;
+}
+
+/* Smooth transitions for dark mode */
+* {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}

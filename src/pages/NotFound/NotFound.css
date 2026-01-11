@@ -1,0 +1,88 @@
+/* 404 Page Styles */
+
+.notfound-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  padding: 2rem;
+}
+
+.notfound-content {
+  text-align: center;
+  max-width: 600px;
+}
+
+.notfound-icon {
+  font-size: 6rem;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.notfound-title {
+  font-size: 8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  line-height: 1;
+}
+
+.notfound-subtitle {
+  font-size: 2.5rem;
+  color: var(--text-dark);
+  margin: 1rem 0;
+}
+
+.notfound-text {
+  font-size: 1.2rem;
+  color: var(--text-light);
+  line-height: 1.8;
+  margin: 0 0 2.5rem 0;
+}
+
+.notfound-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .notfound-icon {
+    font-size: 4rem;
+  }
+  
+  .notfound-title {
+    font-size: 5rem;
+  }
+  
+  .notfound-subtitle {
+    font-size: 1.8rem;
+  }
+  
+  .notfound-text {
+    font-size: 1rem;
+  }
+  
+  .notfound-actions {
+    flex-direction: column;
+  }
+  
+  .notfound-actions .btn {
+    width: 100%;
+  }
+}
