@@ -1,9 +1,20 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Auth.css';
 
 function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { register, isAuthenticated } = useAuth();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -12,7 +23,10 @@ function Register() {
     confirmPassword: ''
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [registerError, setRegisterError] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,6 +43,9 @@ function Register() {
         ...errors,
         [name]: ''
       });
+    }
+    if (registerError) {
+      setRegisterError('');
     }
   };
 
@@ -82,23 +99,49 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Clear previous error
+    setRegisterError('');
+    
+    // Validate form
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Call register from AuthContext with exact payload
+      const result = await register({
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password
+      });
+
+      if (result.success) {
+        // Redirect to the page they were trying to access, or home
+        const from = location.state?.from?.pathname || '/';
+        navigate(from, { replace: true });
+      } else {
+        // Show error message from backend
+        setRegisterError(result.message || 'Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      // Extract detailed error message
+      const errorMsg = error.response?.data?.message 
+        || error.response?.data?.errors?.[0]?.msg
+        || error.message
+        || 'An error occurred. Please try again.';
+      setRegisterError(errorMsg);
+    } finally {
       setIsLoading(false);
-      alert('Account created successfully! Redirecting to login...');
-      navigate('/login');
-    }, 1500);
+    }
   };
 
-  // Handle social signup placeholders
-  const handleSocialSignup = (provider) => {
-    alert(`${provider} signup is not implemented yet. This is a placeholder for future integration.`);
+  // Handle social signup placeholders (UI only, backend-ready)
+  const handleGoogleSignup = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    window.location.href = `${apiUrl}/api/auth/google`;
   };
 
   return (
@@ -126,6 +169,13 @@ function Register() {
             <p>Sign up to start shopping for organic products</p>
           </div>
 
+          {/* Error Message */}
+          {registerError && (
+            <div className="error-alert">
+              {registerError}
+            </div>
+          )}
+
           {/* Signup Form */}
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
@@ -138,6 +188,7 @@ function Register() {
                 onChange={handleChange}
                 placeholder="John Doe"
                 className={errors.name ? 'input-error' : ''}
+                autoComplete="name"
               />
               {errors.name && <span className="error-message">{errors.name}</span>}
             </div>
@@ -152,35 +203,78 @@ function Register() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 className={errors.email ? 'input-error' : ''}
+                autoComplete="email"
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create a strong password"
-                className={errors.password ? 'input-error' : ''}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create a strong password"
+                  className={errors.password ? 'input-error' : ''}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  )}
+                </button>
+              </div>
               {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Re-enter your password"
-                className={errors.confirmPassword ? 'input-error' : ''}
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Re-enter your password"
+                  className={errors.confirmPassword ? 'input-error' : ''}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
             </div>
 
@@ -196,7 +290,7 @@ function Register() {
                     }
                   }}
                 />
-                <span>I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></span>
+                <span>I agree to the <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link></span>
               </label>
               {errors.terms && <span className="error-message">{errors.terms}</span>}
             </div>
@@ -206,7 +300,13 @@ function Register() {
               className="btn-primary"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? (
+                <>
+                  <span className="spinner"></span> Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
             </button>
           </form>
 
@@ -215,21 +315,20 @@ function Register() {
             <span>or</span>
           </div>
 
-          {/* Social Signup */}
+          {/* Google Signup (UI only, backend-ready) */}
           <button 
             type="button" 
             className="btn-social"
-            onClick={() => handleSocialSignup('Google')}
+            onClick={handleGoogleSignup}
+            disabled={isLoading}
           >
-            <span>🔍</span> Sign up with Google
-          </button>
-
-          <button 
-            type="button" 
-            className="btn-social"
-            onClick={() => handleSocialSignup('Facebook')}
-          >
-            <span>📘</span> Sign up with Facebook
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+              <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+              <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+              <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+            </svg>
+            Sign up with Google
           </button>
 
           {/* Footer */}

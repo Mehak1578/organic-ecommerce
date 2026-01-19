@@ -1,12 +1,15 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 function Navbar() {
   const { getCartCount } = useCart();
   const { getWishlistCount } = useWishlist();
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Load theme from localStorage on mount
@@ -28,6 +31,12 @@ function Navbar() {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
     }
+  };
+
+  // Handle logout
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
   };
 
   return (
@@ -107,9 +116,20 @@ function Navbar() {
               )}
             </button>
             
-            <Link to="/login" className="navbar-btn">
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to="/account" className="navbar-icon" title="My Account">
+                  <span className="icon">👤</span>
+                </Link>
+                <button onClick={handleLogout} className="navbar-btn navbar-btn-logout">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="navbar-btn">
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -2,8 +2,8 @@
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
-  padding: 6rem 0;
+  background: radial-gradient(circle at top left, #e8f5e9 0%, #f5f7fa 40%, #ffffff 100%);
+  padding: 6rem 0 5rem;
   margin-bottom: 4rem;
 }
 
@@ -12,6 +12,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  animation: fadeInUp 0.7s ease-out;
 }
 
 .hero-text {
@@ -154,7 +155,7 @@
 
 /* Featured Products Section */
 .featured-section {
-  padding: 4rem 0;
+  padding: 4rem 0 4.5rem;
   background: #fafafa;
 }
 
@@ -170,7 +171,7 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   display: flex;
   flex-direction: column;
 }
