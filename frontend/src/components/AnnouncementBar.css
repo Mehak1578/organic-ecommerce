@@ -1,0 +1,168 @@
+/* ========================================
+   ANNOUNCEMENT BAR - Organic Brand Style
+   Continuous horizontal scrolling marquee
+   ======================================== */
+
+.announcement-bar {
+  background: linear-gradient(90deg, #1b8f3c 0%, #1e9e44 50%, #1b8f3c 100%);
+  color: #ffffff;
+  padding: 0.7rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  letter-spacing: 0.3px;
+}
+
+.announcement-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Scrolling track container */
+.announcement-track {
+  display: flex;
+  width: fit-content;
+  animation: scroll-announcements 60s linear infinite;
+}
+
+/* Pause animation on hover */
+.announcement-bar:hover .announcement-track {
+  animation-play-state: paused;
+}
+
+/* Content wrapper */
+.announcement-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Individual announcement item */
+.announcement-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 2rem;
+  white-space: nowrap;
+}
+
+/* Bullet separator */
+.announcement-bullet {
+  color: #ffd700;
+  font-size: 0.5rem;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+/* Announcement text */
+.announcement-text {
+  font-weight: 500;
+  opacity: 0.98;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Infinite scroll animation */
+@keyframes scroll-announcements {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .announcement-bar {
+    font-size: 0.8rem;
+    padding: 0.6rem 0;
+  }
+  
+  .announcement-item {
+    padding: 0 1.5rem;
+    gap: 0.5rem;
+  }
+  
+  .announcement-track {
+    animation: scroll-announcements 50s linear infinite;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .announcement-bar {
+    font-size: 0.75rem;
+    padding: 0.55rem 0;
+  }
+  
+  .announcement-item {
+    padding: 0 1.2rem;
+    gap: 0.4rem;
+  }
+  
+  .announcement-bullet {
+    font-size: 0.45rem;
+  }
+  
+  .announcement-track {
+    animation: scroll-announcements 40s linear infinite;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 360px) {
+  .announcement-bar {
+    font-size: 0.7rem;
+  }
+  
+  .announcement-item {
+    padding: 0 1rem;
+  }
+}
+
+/* ========================================
+   DARK MODE COMPATIBILITY
+   ======================================== */
+
+body.dark-mode .announcement-bar {
+  background: linear-gradient(90deg, #0f6b2a 0%, #12792f 50%, #0f6b2a 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .announcement-text {
+  opacity: 1;
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-track {
+    animation: scroll-announcements 120s linear infinite;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .announcement-bar {
+    background: #1b8f3c;
+  }
+  
+  .announcement-text {
+    font-weight: 600;
+  }
+}

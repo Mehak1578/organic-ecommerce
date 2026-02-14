@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding-top: 42px; /* Space for fixed announcement bar */
 }
 
 /* Ensure footer stays at bottom */
@@ -10,7 +11,41 @@
   flex: 1;
 }
 
-/* Smooth transitions for dark mode */
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Smooth transitions for dark mode and interactions */
 * {
   transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Page transition animations */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-content > * {
+  animation: pageEnter 0.4s ease-out;
+}
+
+/* Responsive adjustments for announcement bar spacing */
+@media (max-width: 768px) {
+  .app {
+    padding-top: 38px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding-top: 36px;
+  }
 }

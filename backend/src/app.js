@@ -5,7 +5,9 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
+import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import './config/passport.js'; // Initialize passport config (env already loaded)
 
 const app = express();
@@ -52,11 +54,26 @@ app.get('/', (req, res) => {
 
 // API routes
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is healthy' });
+  const readyState = mongoose.connection.readyState;
+  const connected = readyState === 1;
+
+  res.json({
+    status: 'OK',
+    message: 'Server is healthy',
+    db: {
+      connected,
+      readyState,
+      name: connected ? mongoose.connection.name : null,
+      host: connected ? mongoose.connection.host : null
+    }
+  });
 });
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Order routes
+app.use('/api/orders', orderRoutes);
 
 // 404 handler
 app.use((req, res) => {

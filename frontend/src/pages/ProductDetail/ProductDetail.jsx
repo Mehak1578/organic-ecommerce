@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useAuth } from '../../context/AuthContext';
 import { products } from '../../data/products';
 import './ProductDetail.css';
 
@@ -14,6 +15,7 @@ function ProductDetail() {
   // Get cart and wishlist functions
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { isAuthenticated } = useAuth();
 
   // Reset quantity and scroll to top when product changes
   useEffect(() => {
@@ -51,6 +53,15 @@ function ProductDetail() {
 
   // Handle add to cart
   const handleAddToCart = () => {
+    // Check if user is logged in
+    if (!isAuthenticated) {
+      // Save product ID to localStorage for redirect after login
+      localStorage.setItem('redirectProduct', JSON.stringify({ id: product.id, quantity }));
+      // Redirect to login
+      navigate('/login', { state: { from: { pathname: `/product/${product.id}` } } });
+      return;
+    }
+    
     addToCart(product, quantity);
     alert(`Added ${quantity} ${product.name} to cart!`);
   };

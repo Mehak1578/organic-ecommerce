@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
+import { products } from '../../data/products';
 import './Auth.css';
 
 function Register() {
   const navigate = useNavigate();
   const location = useLocation();
   const { register, isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   
   // Redirect if already logged in
   useEffect(() => {
@@ -118,6 +121,24 @@ function Register() {
       });
 
       if (result.success) {
+        // Check if there's a saved product to add to cart
+        const redirectProduct = localStorage.getItem('redirectProduct');
+        if (redirectProduct) {
+          try {
+            const productData = JSON.parse(redirectProduct);
+            const product = products.find(p => p.id === productData.id);
+            if (product) {
+              addToCart(product, productData.quantity || 1);
+              alert(`Added ${product.name} to cart!`);
+            }
+            // Clear the saved product
+            localStorage.removeItem('redirectProduct');
+          } catch (error) {
+            console.error('Error adding saved product to cart:', error);
+            localStorage.removeItem('redirectProduct');
+          }
+        }
+        
         // Redirect to the page they were trying to access, or home
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
@@ -173,6 +194,11 @@ function Register() {
           {registerError && (
             <div className="error-alert">
               {registerError}
+              {registerError.toLowerCase().includes('already exists') && (
+                <div style={{ marginTop: '10px', fontSize: '0.9rem' }}>
+                  Already have an account? <Link to="/login" style={{ color: '#8bc34a', fontWeight: 'bold' }}>Login here</Link>
+                </div>
+              )}
             </div>
           )}
 

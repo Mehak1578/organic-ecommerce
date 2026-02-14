@@ -1,8 +1,9 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
+import { FaUserCircle, FaUser, FaShoppingBag, FaSignOutAlt } from 'react-icons/fa';
 import './Navbar.css';
 
 function Navbar() {
@@ -11,6 +12,8 @@ function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -38,6 +41,22 @@ function Navbar() {
     await logout();
     navigate('/');
   };
+
+  // Close user menu on outside click
+  useEffect(() => {
+    if (!isUserMenuOpen) return;
+
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
 
   return (
     <nav className="navbar">
@@ -117,14 +136,56 @@ function Navbar() {
             </button>
             
             {isAuthenticated ? (
-              <>
-                <Link to="/account" className="navbar-icon" title="My Account">
-                  <span className="icon">👤</span>
-                </Link>
-                <button onClick={handleLogout} className="navbar-btn navbar-btn-logout">
-                  Logout
+              <div className="navbar-user" ref={userMenuRef}>
+                <button
+                  type="button"
+                  className="navbar-user-btn"
+                  onClick={() => setIsUserMenuOpen((open) => !open)}
+                >
+                  <FaUserCircle className="navbar-user-icon" />
+                  <span className="navbar-user-name">
+                    {user?.name ? user.name.split(' ')[0] : 'Account'}
+                  </span>
+                  <span className="navbar-user-caret">▾</span>
                 </button>
-              </>
+                {isUserMenuOpen && (
+                  <div className="navbar-user-menu">
+                    <button
+                      type="button"
+                      className="user-menu-item"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        navigate('/account');
+                      }}
+                    >
+                      <FaUser className="user-menu-icon" />
+                      <span>My Profile</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="user-menu-item"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        navigate('/orders');
+                      }}
+                    >
+                      <FaShoppingBag className="user-menu-icon" />
+                      <span>My Orders</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="user-menu-item user-menu-logout"
+                      onClick={async () => {
+                        setIsUserMenuOpen(false);
+                        await handleLogout();
+                      }}
+                    >
+                      <FaSignOutAlt className="user-menu-icon" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link to="/login" className="navbar-btn">
                 Login

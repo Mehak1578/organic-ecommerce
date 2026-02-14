@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import './Cart.css';
 
 function Cart() {
+  const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity, getCartTotal, getCartCount } = useCart();
 
   const handleIncrement = (productId, currentQuantity) => {
@@ -53,7 +54,13 @@ function Cart() {
               <Link to="/products" className="btn-browse-products">
                 Browse Products
               </Link>
-              <Link to="/" className="link-home-cart">Back to Home</Link>
+              <button 
+                type="button" 
+                onClick={() => navigate('/')} 
+                className="btn-home-secondary"
+              >
+                ← Back to Home
+              </button>
             </div>
           </div>
         ) : (
@@ -174,9 +181,9 @@ function Cart() {
                 </div>
 
                 {/* Checkout Button */}
-                <button className="checkout-btn">
+                <Link to="/checkout" className="checkout-btn">
                   Proceed to Checkout
-                </button>
+                </Link>
 
                 <div className="secure-notice">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

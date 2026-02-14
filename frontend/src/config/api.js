@@ -134,5 +134,26 @@ export const authAPI = {
   }
 };
 
+// Orders API methods
+export const ordersAPI = {
+  // Get user orders
+  getUserOrders: async () => {
+    const response = await api.get('/orders');
+    return response.data;
+  },
+
+  // Create new order
+  createOrder: async (orderData) => {
+    const response = await api.post('/orders', orderData);
+    return response.data;
+  },
+
+  // Get order by ID
+  getOrderById: async (orderId) => {
+    const response = await api.get(`/orders/${orderId}`);
+    return response.data;
+  }
+};
+
 export { api };
 export default config;

@@ -1,16 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useAuth } from '../../context/AuthContext';
 import { products, categories } from '../../data/products';
 import './Home.css';
 
 function Home() {
+  const navigate = useNavigate();
   // Get featured products (limited to 6)
   const featuredProducts = products.filter(p => p.featured).slice(0, 6);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { isAuthenticated } = useAuth();
 
   const handleAddToCart = (product) => {
+    // Check if user is logged in
+    if (!isAuthenticated) {
+      // Save product ID to localStorage for redirect after login
+      localStorage.setItem('redirectProduct', JSON.stringify({ id: product.id, quantity: 1 }));
+      // Redirect to login
+      navigate('/login', { state: { from: { pathname: '/' } } });
+      return;
+    }
+    
     addToCart(product, 1);
     alert(`Added ${product.name} to cart!`);
   };
@@ -23,13 +35,18 @@ function Home() {
           <div className="hero-content">
             <div className="hero-text">
               <h1 className="hero-title">
-                Fresh & Organic <br />
-                <span className="highlight">Products</span> For Life
+                Holistic Organic <br />
+                <span className="highlight">Wellness</span> From India
               </h1>
               <p className="hero-desc">
-                Discover the finest selection of organic products, sourced directly from local farms.
-                Fresh, healthy, and delivered to your doorstep.
+                Discover carefully curated organic groceries and wellness essentials inspired by traditional Indian living.
+                Fresh, authentic, and delivered with care to your doorstep.
               </p>
+              <div className="hero-badges">
+                <span>100% Certified Organic</span>
+                <span>Made for Indian Lifestyles</span>
+                <span>Sourced from Trusted Farms</span>
+              </div>
               <div className="hero-buttons">
                 <Link to="/products" className="btn btn-primary">
                   Shop Now
@@ -104,9 +121,15 @@ function Home() {
                   </div>
                   <div className="product-footer">
                     <span className="product-price">₹{product.price}</span>
-                    <Link to={`/product/${product.id}`} className="btn-view">
-                      View Details
-                    </Link>
+                    <button 
+                      className="btn-add-cart"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleAddToCart(product);
+                      }}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
               </div>

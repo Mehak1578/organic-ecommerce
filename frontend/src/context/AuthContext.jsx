@@ -66,9 +66,28 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: response.message };
     } catch (error) {
       console.error('Login error:', error);
+      console.error('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
+      
+      // Extract error message with better handling
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.response?.data) {
+        errorMessage = error.response.data.message 
+          || error.response.data.errors?.[0]?.msg
+          || errorMessage;
+      } else if (error.request) {
+        errorMessage = 'Unable to connect to server. Please check your connection.';
+      } else {
+        errorMessage = error.message || errorMessage;
+      }
+      
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Login failed. Please try again.' 
+        message: errorMessage
       };
     }
   };
@@ -95,12 +114,27 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: response.message || 'Registration failed' };
     } catch (error) {
       console.error('Register error:', error);
+      console.error('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
       
-      // Extract error message from response
-      const errorMessage = error.response?.data?.message 
-        || error.response?.data?.errors?.[0]?.msg
-        || error.message 
-        || 'Registration failed. Please try again.';
+      // Extract error message from response with better handling
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (error.response?.data) {
+        // Backend returned an error response
+        errorMessage = error.response.data.message 
+          || error.response.data.errors?.[0]?.msg
+          || errorMessage;
+      } else if (error.request) {
+        // Request was made but no response received
+        errorMessage = 'Unable to connect to server. Please check your connection.';
+      } else {
+        // Something else happened
+        errorMessage = error.message || errorMessage;
+      }
       
       return { 
         success: false, 

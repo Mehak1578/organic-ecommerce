@@ -1,13 +1,25 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import './Wishlist.css';
 
 function Wishlist() {
+  const navigate = useNavigate();
   const { wishlistItems, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const handleAddToCart = (item) => {
+    // Check if user is logged in
+    if (!isAuthenticated) {
+      // Save product ID to localStorage for redirect after login
+      localStorage.setItem('redirectProduct', JSON.stringify({ id: item.id, quantity: 1 }));
+      // Redirect to login
+      navigate('/login', { state: { from: { pathname: '/wishlist' } } });
+      return;
+    }
+    
     addToCart(item, 1);
     alert(`Added ${item.name} to cart!`);
   };
@@ -83,9 +95,13 @@ function Wishlist() {
               <Link to="/products" className="btn-browse">
                 Browse Products
               </Link>
-              <Link to="/" className="link-home">
-                Go to Home
-              </Link>
+              <button 
+                type="button" 
+                onClick={() => navigate('/')} 
+                className="btn-home-secondary"
+              >
+                ← Back to Home
+              </button>
             </div>
           </div>
         )}

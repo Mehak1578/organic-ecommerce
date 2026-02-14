@@ -108,18 +108,22 @@ function About() {
         <section className="stats-section">
           <div className="stats-grid">
             <div className="stat-card">
+              <div className="stat-icon">🌾</div>
               <div className="stat-number">50+</div>
               <div className="stat-label">Local Farmers</div>
             </div>
             <div className="stat-card">
+              <div className="stat-icon">😊</div>
               <div className="stat-number">10,000+</div>
               <div className="stat-label">Happy Customers</div>
             </div>
             <div className="stat-card">
+              <div className="stat-icon">🧺</div>
               <div className="stat-number">500+</div>
               <div className="stat-label">Organic Products</div>
             </div>
             <div className="stat-card">
+              <div className="stat-icon">✅</div>
               <div className="stat-number">100%</div>
               <div className="stat-label">Certified Organic</div>
             </div>

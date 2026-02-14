@@ -28,6 +28,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             // Update existing user to include Google
             user.googleId = profile.id;
             user.provider = 'google';
+            user.isVerified = true;
             await user.save();
             return done(null, user);
           }
@@ -37,7 +38,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             name: profile.displayName,
             email: profile.emails[0].value,
             googleId: profile.id,
-            provider: 'google'
+            provider: 'google',
+            isVerified: true
           });
 
           done(null, user);

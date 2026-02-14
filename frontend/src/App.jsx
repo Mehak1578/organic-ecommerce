@@ -11,7 +11,11 @@ import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Wishlist from './pages/Wishlist/Wishlist';
 import Cart from './pages/Cart/Cart';
+import Checkout from './pages/Checkout/Checkout';
 import Account from './pages/Account/Account';
+import Orders from './pages/Orders/Orders';
+import OrderDetail from './pages/Orders/OrderDetail';
+import EditProfile from './pages/Profile/EditProfile';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import AuthCallback from './pages/Auth/AuthCallback';
@@ -45,6 +49,14 @@ function App() {
                   } 
                 />
                 <Route 
+                  path="orders" 
+                  element={
+                    <ProtectedRoute>
+                      <Orders />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
                   path="wishlist" 
                   element={
                     <ProtectedRoute>
@@ -60,6 +72,38 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
+                 <Route 
+                   path="profile/edit" 
+                   element={
+                     <ProtectedRoute>
+                       <EditProfile />
+                     </ProtectedRoute>
+                   } 
+                 />
+                <Route 
+                  path="checkout" 
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  } 
+                />
+                 <Route 
+                   path="orders" 
+                   element={
+                     <ProtectedRoute>
+                       <Orders />
+                     </ProtectedRoute>
+                   } 
+                 />
+                 <Route 
+                   path="orders/:id" 
+                   element={
+                     <ProtectedRoute>
+                       <OrderDetail />
+                     </ProtectedRoute>
+                   } 
+                 />
               </Route>
 
               {/* Routes without Layout (Auth pages, 404) */}

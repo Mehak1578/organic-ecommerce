@@ -24,7 +24,17 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false // Don't return password by default
+    select: false, // Don't return password by default
+    validate: {
+      validator: function(password) {
+        // Password is required only for local provider
+        if (this.provider === 'local') {
+          return !!password;
+        }
+        return true;
+      },
+      message: 'Password is required for email/password authentication'
+    }
   },
   provider: {
     type: String,
@@ -34,6 +44,10 @@ const userSchema = new mongoose.Schema({
   googleId: {
     type: String,
     sparse: true // Allows null values for non-Google users
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   },
   role: {
     type: String,
@@ -87,7 +101,13 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 // Method to generate JWT token
 userSchema.methods.generateAuthToken = function() {
   return jwt.sign(
-    { id: this._id, email: this.email, role: this.role },
+    { 
+      id: this._id, 
+      email: this.email, 
+      role: this.role,
+      isVerified: this.isVerified,
+      provider: this.provider
+    },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE }
   );
