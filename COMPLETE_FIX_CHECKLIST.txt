@@ -60,15 +60,16 @@ Your Render backend CANNOT connect to MongoDB because:
        Value: production
 
     2. MONGODB_URI
-       Value: mongodb+srv://mehak24_db_user:mehak15@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
+       Value: mongodb+srv://<db-username>:<db-password>@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
        
-       ⚠️  IMPORTANT: Copy this EXACTLY as one line!
-       ⚠️  Must include "/organicshop" (database name)
+       ⚠️  IMPORTANT: Keep this value secret. Do NOT commit your real
+       ⚠️  username or password to GitHub.
 
     3. JWT_SECRET
-       Value: e50568bd74cf3f7ca03b8ece82a52009b81800a0c3b8e1d32defd0a0b9a29757
+       Value: <your-secure-jwt-secret>
        
-       ⚠️  IMPORTANT: Copy exactly as shown!
+       ⚠️  IMPORTANT: Generate a strong random string in Render or
+       ⚠️  your .env file. Never share this publicly.
 
     4. JWT_EXPIRE
        Value: 7d

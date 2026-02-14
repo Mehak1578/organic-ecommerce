@@ -61,13 +61,13 @@ API Request: POST https://organic-ecommerce-yr0g.onrender.com/api/auth/register
    **Variable 2:**
    ```
    Key: MONGODB_URI
-   Value: mongodb+srv://mehak24_db_user:mehak15@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
+   Value: mongodb+srv://<db-username>:<db-password>@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
    ```
 
    **Variable 3:**
    ```
    Key: JWT_SECRET
-   Value: e50568bd74cf3f7ca03b8ece82a52009b81800a0c3b8e1d32defd0a0b9a29757
+   Value: <your-secure-jwt-secret>
    ```
 
    **Variable 4:**

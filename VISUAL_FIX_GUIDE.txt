@@ -98,12 +98,13 @@ VALUE: production
 [Add Variable]
 
 KEY: MONGODB_URI
-VALUE: mongodb+srv://mehak24_db_user:mehak15@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
+VALUE: mongodb+srv://<db-username>:<db-password>@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
 [Add Variable]
-⚠️  Copy as ONE LINE, no breaks!
+⚠️  Copy as ONE LINE, no breaks, and keep
+⚠️  your real username/password secret (never commit them).
 
 KEY: JWT_SECRET
-VALUE: e50568bd74cf3f7ca03b8ece82a52009b81800a0c3b8e1d32defd0a0b9a29757
+VALUE: <your-secure-jwt-secret>
 [Add Variable]
 
 KEY: JWT_EXPIRE

@@ -8,10 +8,11 @@ Your deployed app is getting a 500 error because of **missing/incorrect environm
 
 ### 1. Fix MongoDB Connection String
 
-Your current MongoDB URI is missing the database name. It should be:
+Your MongoDB URI should include the database name and use a
+non-public username and password, for example:
 
 ```
-mongodb+srv://mehak24_db_user:mehak15@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
+mongodb+srv://<db-username>:<db-password>@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
 ```
 
 ### 2. MongoDB Atlas - Allow Render IP Access
@@ -33,9 +34,9 @@ Add these environment variables:
 ```bash
 NODE_ENV=production
 
-MONGODB_URI=mongodb+srv://mehak24_db_user:mehak15@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
+MONGODB_URI=mongodb+srv://<db-username>:<db-password>@organicwebsite.jfcdjaq.mongodb.net/organicshop?retryWrites=true&w=majority&appName=organicwebsite
 
-JWT_SECRET=e50568bd74cf3f7ca03b8ece82a52009b81800a0c3b8e1d32defd0a0b9a29757
+JWT_SECRET=<your-secure-jwt-secret>
 
 JWT_EXPIRE=7d
 
